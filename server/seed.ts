@@ -76,6 +76,11 @@ const initialCsds = [
 ]
 
 export async function seed() {
+  if (process.env.SHARED_DATABASE === 'true') {
+    console.log('SHARED_DATABASE=true — seed ignorado (dono: Eficiência da Medição).')
+    return
+  }
+
   for (const user of demoUsers) {
     const hash = await bcrypt.hash(user.password, 10)
     await query(

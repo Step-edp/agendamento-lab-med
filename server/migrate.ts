@@ -1,6 +1,15 @@
 import { query } from './db.js'
 
+/**
+ * Em produção integrada (SHARED_DATABASE=true), o app Eficiência da Medição
+ * é o dono das migrações. Este migrate só roda em ambiente standalone.
+ */
 export async function migrate() {
+  if (process.env.SHARED_DATABASE === 'true') {
+    console.log('SHARED_DATABASE=true — migrates ignorados (dono: Eficiência da Medição).')
+    return
+  }
+
   await query(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -8,7 +17,7 @@ export async function migrate() {
       registration TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
-      role TEXT NOT NULL CHECK (role IN ('admin', 'field')),
+      role TEXT NOT NULL CHECK (role IN ('admin', 'compras', 'field')),
       approval_status TEXT NOT NULL CHECK (approval_status IN ('approved', 'pending')),
       requested_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       approved_at TIMESTAMPTZ,

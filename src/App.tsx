@@ -174,11 +174,40 @@ export default function App() {
   const [selectedSection, setSelectedSection] = useState<Section | null>(null)
 
   useEffect(() => {
-    void api
-      .me()
-      .then(({ user: currentUser }) => setUser(currentUser))
-      .catch(() => setUser(null))
-      .finally(() => setBooting(false))
+    let cancelled = false
+
+    async function bootstrap() {
+      try {
+        const hash = window.location.hash
+        const ssoMatch = hash.match(/(?:^#|[#&])sso=([^&]+)/)
+        const sectionMatch = hash.match(/[?&#]section=([^&]+)/)
+        const ssoToken = ssoMatch?.[1] ? decodeURIComponent(ssoMatch[1]) : null
+        const sectionFromHash = sectionMatch?.[1]
+          ? decodeURIComponent(sectionMatch[1])
+          : null
+
+        if (ssoToken) {
+          await api.exchangeSsoToken(ssoToken)
+          window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`)
+        }
+
+        const { user: currentUser } = await api.me()
+        if (cancelled) return
+        setUser(currentUser)
+        if (sectionFromHash === 'Agendar' || sectionFromHash === 'Consultar') {
+          setSelectedSection(sectionFromHash)
+        }
+      } catch {
+        if (!cancelled) setUser(null)
+      } finally {
+        if (!cancelled) setBooting(false)
+      }
+    }
+
+    void bootstrap()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const handleLogout = async () => {

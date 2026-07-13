@@ -9,6 +9,22 @@ Aplicativo independente para a **Equipe de Campo** agendar e consultar medidores
 - Autenticação por matrícula e senha
 - PostgreSQL com migração e seed automáticos na inicialização
 
+## Integração com Eficiência da Medição
+
+Em produção os dois apps compartilham o **mesmo PostgreSQL**:
+
+- Agendamentos criados aqui aparecem em **Entrada de medidores** no portal principal
+- CSDs e calendário de bloqueios são os mesmos
+- Login SSO: pelo portal, em Equipe de campo → Agendar/Consultar
+
+Variáveis no Railway do Agendamento Lab Med:
+
+| Variável | Valor |
+|----------|-------|
+| `DATABASE_URL` | URL pública (ou interna se mesmo projeto) do Postgres do Eficiência |
+| `SHARED_DATABASE` | `true` (desliga migrate/seed locais) |
+| `JWT_SECRET` | **igual** ao do Eficiência da Medição |
+
 ## Desenvolvimento local
 
 ```bash
@@ -31,14 +47,10 @@ npm run dev
 
 ## Deploy (Railway)
 
-1. Crie um projeto no Railway
-2. Adicione o plugin **PostgreSQL**
-3. Conecte o repositório GitHub deste projeto
-4. Variáveis de ambiente:
-   - `DATABASE_URL` — gerada automaticamente pelo PostgreSQL do Railway
-   - `JWT_SECRET` — segredo forte para tokens
-   - `NODE_ENV=production`
-5. O `railway.toml` executa `npm run build` e inicia com `npm run start`
+1. Crie um projeto no Railway (ou use o mesmo do Eficiência)
+2. Conecte o repositório GitHub
+3. Configure as variáveis da tabela de integração acima
+4. O `railway.toml` executa `npm run build` e inicia com `npm run start`
 
 ## Scripts
 

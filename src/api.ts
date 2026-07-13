@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'field'
+export type UserRole = 'admin' | 'compras' | 'field'
 export type ApprovalStatus = 'approved' | 'pending'
 
 export type AppUser = {
@@ -82,6 +82,11 @@ export const api = {
     request<{ user: AppUser }>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ registration, password }),
+    }),
+  exchangeSsoToken: (ssoToken: string) =>
+    request<{ user: AppUser }>('/api/auth/sso-exchange', {
+      method: 'POST',
+      body: JSON.stringify({ ssoToken }),
     }),
   logout: () =>
     request<{ ok: boolean }>('/api/auth/logout', {

@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { migrate } from './migrate.js'
 import { seed } from './seed.js'
 import { requireAuth } from './auth.js'
-import { login, logout, me } from './routes/users.js'
+import { login, logout, me, exchangeSsoToken } from './routes/users.js'
 import { listCsds } from './routes/csds.js'
 import { createMeterSchedule, listMeterSchedules } from './routes/meter-schedules.js'
 
@@ -53,6 +53,7 @@ async function start() {
   app.post('/api/auth/login', login)
   app.get('/api/auth/me', requireAuth, me)
   app.post('/api/auth/logout', logout)
+  app.post('/api/auth/sso-exchange', exchangeSsoToken)
 
   app.get('/api/csds', requireAuth, listCsds)
   app.get('/api/meter-schedules', requireAuth, listMeterSchedules)
