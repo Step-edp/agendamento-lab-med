@@ -67,14 +67,6 @@ export function FieldTeamConsultarPanel({ user }: FieldTeamConsultarPanelProps) 
               <span>Somente meus agendamentos</span>
             </label>
           ) : null}
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={() => void loadSchedules()}
-            disabled={loading}
-          >
-            {loading ? 'Atualizando...' : 'Atualizar'}
-          </button>
         </div>
       </div>
 
